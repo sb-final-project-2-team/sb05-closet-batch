@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = "com.codeit.closet",
+    basePackages = "com.codeit.closet.module.weather.repository",
     entityManagerFactoryRef = "businessManagerFactory",
-    transactionManagerRef = ""
+    transactionManagerRef = "businessTransactionManager"
 )
 public class BusinessDataSourceConfig {
 
@@ -29,17 +29,17 @@ public class BusinessDataSourceConfig {
     return DataSourceBuilder.create().build();
   }
 
-  @Bean
+  @Bean(name = "businessManagerFactory")
   public LocalContainerEntityManagerFactoryBean businessManagerFactory(
       EntityManagerFactoryBuilder builder,
       @Qualifier("businessDataSource") DataSource businessDataSource) {
     return builder
         .dataSource(businessDataSource)
-        .packages("com.codeit.closet")
+        .packages("com.codeit.closet.common.entity")
         .build();
   }
 
-  @Bean
+  @Bean(name = "businessTransactionManager")
   public PlatformTransactionManager businessTransactionManager(
       @Qualifier("businessManagerFactory") EntityManagerFactory businessManagerFactory) {
     return new JpaTransactionManager(businessManagerFactory);

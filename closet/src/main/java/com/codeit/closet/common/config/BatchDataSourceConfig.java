@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = "com.codeit.closet",
+    basePackages = "com.codeit.closet.module.batch.config",
     entityManagerFactoryRef = "batchEntityManagerFactory",
     transactionManagerRef = "batchTransactionManager"
 )
@@ -39,7 +39,7 @@ public class BatchDataSourceConfig {
   ) {
     return builder
         .dataSource(batchDataSource)
-        .packages("com.codeit.closet")
+        .packages("com.codeit.closet.common.entity")
         .build();
   }
 
