@@ -1,18 +1,41 @@
+server:
+  port: 8082
 spring:
   application:
     name: closet
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/closet
-    driver-class-name: org.postgresql.Driver
-    username: closet-user
-    password: closet_1234
-
   jpa:
+    show-sql: true
     hibernate:
-      ddl-auto: update   # (dev환경이면 update OK / prod는 validate 권장)
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
+
+  batch:
+    datasource:
+      jdbcUrl: jdbc:postgresql://localhost:5432/closet
+      username: closet-user
+      password: closet_1234
+      driver-class-name: org.postgresql.Driver
+
+  business:
+    datasource:
+      jdbcUrl: jdbc:postgresql://localhost:5432/closet-batch
+      username: closet-user
+      password: closet_1234
+      driver-class-name: org.postgresql.Driver
+
+management:
+  server:
+    port: 9103
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus, metrics
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
