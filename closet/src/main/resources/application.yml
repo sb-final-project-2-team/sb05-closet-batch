@@ -6,21 +6,23 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   batch:
     datasource:
-      jdbcUrl: jdbc:postgresql://localhost:5432/closet
+      jdbcUrl: jdbc:postgresql://localhost:5432/closet-batch
       username: closet-user
       password: closet_1234
       driver-class-name: org.postgresql.Driver
+    job:
+      enabled: false
 
   business:
     datasource:
-      jdbcUrl: jdbc:postgresql://localhost:5432/closet-batch
+      jdbcUrl: jdbc:postgresql://localhost:5432/closet
       username: closet-user
       password: closet_1234
       driver-class-name: org.postgresql.Driver
@@ -39,3 +41,10 @@ management:
     metrics:
       export:
         enabled: true
+closet:
+  weather:
+    api:
+      base-url: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+      service-key: ${KMA_SERVICE_KEY:dummyKey}
+      timeout: 10000
+      data-type: JSON
