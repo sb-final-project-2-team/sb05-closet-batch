@@ -4,7 +4,9 @@ import com.codeit.closet.common.entity.WeatherData;
 import com.codeit.closet.common.entity.WeatherRegion;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+@Slf4j
 @Configuration
 public class WeatherUpdateBatchConfig {
 
@@ -37,7 +40,7 @@ public class WeatherUpdateBatchConfig {
   public JpaPagingItemReader<WeatherRegion> weatherRegionReader() {
     JpaPagingItemReader<WeatherRegion> reader = new JpaPagingItemReader<>();
     reader.setEntityManagerFactory(entityManagerFactory);
-    reader.setQueryString("select wr from WeatherRegion wr");
+    reader.setQueryString("select wr from WeatherRegion wr order by wr.createdAt");
     reader.setPageSize(50);
     return reader;
   }
@@ -53,6 +56,20 @@ public class WeatherUpdateBatchConfig {
         .reader(reader)
         .processor(processor)
         .writer(writer)
+
+        // skip listener
+        .listener(weatherSkipListener())
+
+        // retry
+        .faultTolerant()
+        .retry(IllegalArgumentException.class)
+        .retry(NumberFormatException.class)
+        .retryLimit(3)
+
+        // skip
+        .skip(IllegalArgumentException.class)
+        .skip(NumberFormatException.class)
+        .skipLimit(100)
         .build();
   }
 
@@ -62,4 +79,15 @@ public class WeatherUpdateBatchConfig {
         .start(weatherUpdateStep)
         .build();
   }
+
+  @Bean
+  public SkipListener<WeatherRegion, List<WeatherData>> weatherSkipListener() {
+    return new SkipListener<>() {
+      @Override
+      public void onSkipInProcess(WeatherRegion item, Throwable t) {
+        log.error("날씨 데이터 변환 실패 - regionId={}", item.getId(), t);
+      }
+    };
+  }
+
 }

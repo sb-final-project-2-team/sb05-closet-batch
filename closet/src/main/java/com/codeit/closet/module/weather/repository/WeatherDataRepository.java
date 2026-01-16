@@ -3,7 +3,6 @@ package com.codeit.closet.module.weather.repository;
 import com.codeit.closet.common.entity.ForecastKind;
 import com.codeit.closet.common.entity.WeatherData;
 import com.codeit.closet.common.entity.WeatherRegion;
-import io.micrometer.observation.ObservationFilter;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,5 +25,5 @@ public interface WeatherDataRepository extends JpaRepository<WeatherData, UUID> 
     void deleteShortFcstOutsideRange(@Param("region") WeatherRegion weatherRegion,
         @Param("now") Instant forecastAtBefore);
 
-    Optional<WeatherData> findByWeatherRegionAndForecastAtAndForecastKind(WeatherRegion region, Instant forecastAt, ForecastKind forecastKind);
+    Optional<WeatherData> findByWeatherRegionIdAndForecastAtAndForecastKind(UUID regionId, Instant forecastAt, ForecastKind forecastKind);
 }

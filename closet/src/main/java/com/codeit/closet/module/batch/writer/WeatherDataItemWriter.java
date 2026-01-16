@@ -42,8 +42,8 @@ public class WeatherDataItemWriter implements ItemWriter<List<WeatherData>> {
           .filter(w -> w.getForecastKind() == ForecastKind.SHORT_FCST)
           .map(newData ->
               weatherDataRepository
-                  .findByWeatherRegionAndForecastAtAndForecastKind(
-                      region,
+                  .findByWeatherRegionIdAndForecastAtAndForecastKind(
+                      region.getId(),
                       newData.getForecastAt(),
                       newData.getForecastKind()
                   )
