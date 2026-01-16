@@ -12,7 +12,18 @@ import java.util.UUID;
  * 날씨 예보 데이터
  */
 @Entity
-@Table(name = "weather_data")
+@Table(
+    name = "weather_data",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            columnNames = {
+                "weather_region_id",
+                "forecast_at",
+                "forecast_kind"
+            }
+        )
+    }
+)
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,7 +34,7 @@ public class WeatherData {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weather_region_id", nullable = false)
     private WeatherRegion weatherRegion;
 
@@ -87,4 +98,34 @@ public class WeatherData {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    public void updateFrom(WeatherData source) {
+        this.forecastKind = source.getForecastKind();
+        this.forecastAt = source.getForecastAt();
+        this.forecastedAt = source.getForecastedAt();
+
+        this.skyStatus = source.getSkyStatus();
+
+        // 온도
+        this.temperatureCurrent = source.getTemperatureCurrent();
+        this.temperatureCompPrevDay = source.getTemperatureCompPrevDay();
+        this.temperatureMin = source.getTemperatureMin();
+        this.temperatureMax = source.getTemperatureMax();
+
+        // 강수
+        this.precipitationType = source.getPrecipitationType();
+        this.precipitationAmount = source.getPrecipitationAmount();
+        this.precipitationProb = source.getPrecipitationProb();
+
+        // 습도
+        this.humidityCurrent = source.getHumidityCurrent();
+        this.humidityComparedToDayBefore = source.getHumidityComparedToDayBefore();
+
+        // 바람
+        this.windSpeed = source.getWindSpeed();
+        this.windAsWord = source.getWindAsWord();
+    }
+    public void updateWeatherRegion(WeatherRegion weatherRegion) {
+        this.weatherRegion = weatherRegion;
+    }
 }

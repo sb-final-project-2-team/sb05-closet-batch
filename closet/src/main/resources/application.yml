@@ -4,26 +4,30 @@ spring:
   application:
     name: closet
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   batch:
     datasource:
-      jdbcUrl: jdbc:postgresql://localhost:5432/closet
-      username: closet-user
-      password: closet_1234
+      jdbcUrl: ${BATCH_DATASOURCE_URL:jdbc:postgresql://localhost:5432/closet-batch}
       driver-class-name: org.postgresql.Driver
+      username: ${DATABASE_USERNAME:closet-user}
+      password: ${DATABASE_PASSWORD:closet_1234}
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
 
   business:
     datasource:
-      jdbcUrl: jdbc:postgresql://localhost:5432/closet-batch
-      username: closet-user
-      password: closet_1234
+      jdbcUrl: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/closet}
       driver-class-name: org.postgresql.Driver
+      username: ${DATABASE_USERNAME:closet-user}
+      password: ${DATABASE_PASSWORD:closet_1234}
 
 management:
   server:
@@ -39,3 +43,16 @@ management:
     metrics:
       export:
         enabled: true
+closet:
+  weather:
+    api:
+      base-url: https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+      service-key: ${KMA_SERVICE_KEY:dummyKey}
+      timeout: 10000
+      data-type: JSON
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql: OFF

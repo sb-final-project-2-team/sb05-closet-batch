@@ -52,4 +52,8 @@ public class WeatherRegion {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    public void updateLastCollectedAt() {
+        this.lastCollectedAt = Instant.now();
+    }
 }
