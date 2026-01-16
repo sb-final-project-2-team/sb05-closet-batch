@@ -46,7 +46,7 @@ management:
 closet:
   weather:
     api:
-      base-url: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+      base-url: https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
       service-key: ${KMA_SERVICE_KEY:dummyKey}
       timeout: 10000
       data-type: JSON
