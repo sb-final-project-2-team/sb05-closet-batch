@@ -2,6 +2,7 @@ package com.codeit.closet.module.weather.client;
 
 import com.codeit.closet.module.weather.config.WeatherApiProperties;
 import com.codeit.closet.module.weather.dto.KmaApiResponse;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -79,8 +80,7 @@ public class KmaApiClient {
         String baseDate = now.format(DATE_FORMATTER);
         String baseTime = String.format("%02d00", baseHour);
 
-        java.net.URI uri = UriComponentsBuilder
-                .fromHttpUrl(properties.getVilageFcstUrl())
+        URI uri = UriComponentsBuilder.fromUriString(properties.getVilageFcstUrl())
                 .queryParam("serviceKey", getEncodedServiceKey())
                 .queryParam("pageNo", 1)
                 .queryParam("numOfRows", 1000)

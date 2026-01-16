@@ -17,7 +17,7 @@ public class WeatherBatchScheduler {
   private final JobLauncher jobLauncher;
   private final Job weatherUpdateJob;
 
-  @Scheduled(cron = "0 0 0 * * *")
+  @Scheduled(cron = "0 10 9 * * *")
   public void run() throws Exception {
     JobParameters jobParameters = new JobParametersBuilder()
         .addLong("runTime", System.currentTimeMillis())

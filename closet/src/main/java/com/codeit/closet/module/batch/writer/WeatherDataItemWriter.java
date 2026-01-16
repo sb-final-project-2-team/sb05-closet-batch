@@ -6,7 +6,6 @@ import com.codeit.closet.common.entity.WeatherRegion;
 import com.codeit.closet.module.weather.repository.WeatherDataRepository;
 import com.codeit.closet.module.weather.repository.WeatherRegionRepository;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
@@ -32,11 +31,7 @@ public class WeatherDataItemWriter implements ItemWriter<List<WeatherData>> {
 
       WeatherRegion region = weatherDataList.get(0).getWeatherRegion();
 
-      Instant now = Instant.now()
-          .atZone(ZoneId.systemDefault())
-          .toLocalDate()
-          .atStartOfDay(ZoneId.systemDefault())
-          .toInstant();
+      Instant now = Instant.now();
 
       weatherDataRepository.deleteShortFcstOutsideRange(
           region,
