@@ -10,20 +10,24 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface WeatherDataRepository extends JpaRepository<WeatherData, UUID> {
 
-    @Transactional
-    @Modifying
-    @Query("""
-              delete from WeatherData w
-              where w.weatherRegion = :region
-              and w.forecastKind = 'SHORT_FCST'
-              and w.forecastAt < :now
-        """)
-    void deleteShortFcstOutsideRange(@Param("region") WeatherRegion weatherRegion,
-        @Param("now") Instant forecastAtBefore);
+  @Modifying
+  @Query("""
+          delete from WeatherData w
+          where w.weatherRegion = :region
+            and w.forecastKind = 'SHORT_FCST'
+            and w.forecastAt < :now
+            and not exists (
+                select 1
+                from Feed f
+                where f.weather = w
+            )
+      """)
+  void deleteShortFcstOutsideRange(@Param("region") WeatherRegion weatherRegion,
+      @Param("now") Instant forecastAtBefore);
 
-    Optional<WeatherData> findByWeatherRegionIdAndForecastAtAndForecastKind(UUID regionId, Instant forecastAt, ForecastKind forecastKind);
+  Optional<WeatherData> findByWeatherRegionIdAndForecastAtAndForecastKind(UUID regionId,
+      Instant forecastAt, ForecastKind forecastKind);
 }
